@@ -129,6 +129,46 @@ const SKILL_CARDS = [
   },
 ];
 
+interface FeaturedProject {
+  name: string;
+  description: string;
+  link: string;
+  github: string;
+  language: string;
+  image?: string;
+}
+
+const FEATURED_PROJECTS: FeaturedProject[] = [
+  {
+    name: "Web Scraping Tool for Event in India",
+    description: "A web scraping tool to extract event data from various sources in India.",
+    link: "https://example.com",
+    github: "https://github.com/SudhirYadav5678/WebScrap",
+    language: "TypeScript, Python, React",
+  },
+  {
+    name: "Stock Trader Application",
+    description: "A stock trading application built with Spring Boot and React.",
+    link: "https://example.com",
+    github: "https://github.com/SudhirYadav5678/SpringBootStock",
+    language: "Java, SpringBoot, Postgress",
+  },
+  {
+    name: "MicroService Ecommerce",
+    description: "A microservices-based e-commerce platform built with Spring Boot and React.",
+    link: "https://example.com",
+    github: "https://github.com/SudhirYadav5678/microService",
+    language: "Java, SpringBoot, React",
+  },
+  {
+    name: "School Result Update For Marks",
+    description: "A web application to update and manage school results.",
+    link: "https://example.com",
+    github: "https://github.com/SudhirYadav5678/resultFrontend",
+    language: "Node, Express, MongoDB, React",
+  }
+];
+
 const LANG_COLORS: Record<string, string> = {
   TypeScript: "#3178c6",
   JavaScript: "#f1e05a",
@@ -190,7 +230,6 @@ export default function Home() {
     return () => { document.body.style.overflow = ""; };
   }, [showModal]);
 
-  const visibleRepos = repos.slice(0, VISIBLE_PROJECTS);
 
   const filteredModalRepos = modalFilter
     ? repos.filter(
@@ -261,6 +300,7 @@ export default function Home() {
                 Icon={Linkedin}
               />
               <SocialIcon href="mailto:sudhiryadav5678@gmail.com" Icon={Mail} />
+              <SocialIcon href="https://www.fiverr.com/sellers/sudhiryadav5678" Icon={FiverrIcon} />
             </div>
 
             <a
@@ -332,15 +372,7 @@ export default function Home() {
                   >
                     {card.title}
                   </p>
-                  <div
-                    className={`absolute bottom-4 right-4 w-8 h-8 rounded-full flex items-center justify-center ${card.textDark ? "bg-dark/10" : "bg-white/20"
-                      }`}
-                  >
-                    <ArrowUpRight
-                      size={16}
-                      className={card.textDark ? "text-dark" : "text-white"}
-                    />
-                  </div>
+
                 </div>
               ))}
             </div>
@@ -360,24 +392,11 @@ export default function Home() {
             </button>
           </div>
 
-          {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 size={32} className="text-accent animate-spin" />
-              <span className="ml-3 text-gray-400">Loading projects...</span>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {visibleRepos.map((repo) => (
-                <ProjectCard
-                  key={repo.id}
-                  repo={repo}
-                  imgError={imgErrors.has(repo.id)}
-                  onImgError={() => handleImgError(repo.id)}
-                  getRepoImage={getRepoImage}
-                />
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {FEATURED_PROJECTS.map((project, idx) => (
+              <FeaturedCard key={idx} project={project} />
+            ))}
+          </div>
         </section>
 
         {/* Experience Section */}
@@ -573,6 +592,14 @@ export default function Home() {
             >
               <Linkedin size={18} />
             </a>
+            <a
+              href="https://www.fiverr.com/sellers/sudhiryadav5678"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-500 hover:text-accent transition-colors"
+            >
+              <FiverrIcon size={18} />
+            </a>
           </div>
         </div>
       </footer>
@@ -723,6 +750,90 @@ function ProjectCard({
         </div>
       </div>
     </a>
+  );
+}
+
+/* ─── Featured Card Component ─── */
+
+function FeaturedCard({ project }: { project: FeaturedProject }) {
+  const langColor = LANG_COLORS[project.language] || "#666";
+
+  return (
+    <div className="group bg-dark border border-dark-border rounded-2xl overflow-hidden card-hover flex flex-col">
+      {/* Image Area */}
+      <div className="h-40 sm:h-44 relative bg-gradient-to-br from-accent/10 to-lime/5 overflow-hidden">
+        {project.image ? (
+          <img
+            src={project.image}
+            alt={project.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+            <ImageIcon size={40} className="text-accent/30" />
+            <span className="text-[10px] text-gray-600 font-medium">
+              {project.language || "Code"}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="p-4 sm:p-5 flex flex-col flex-1">
+        <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-accent transition-colors truncate mb-1.5">
+          {project.name}
+        </h3>
+        <p className="text-gray-400 text-sm line-clamp-2 mb-3 flex-1">
+          {project.description}
+        </p>
+        <div className="flex items-center gap-3 mb-3">
+          {project.language && (
+            <span className="flex items-center gap-1 text-xs text-gray-500">
+              <span
+                className="w-2.5 h-2.5 rounded-full shrink-0"
+                style={{ backgroundColor: langColor }}
+              />
+              {project.language}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 mt-auto">
+          <a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 py-2 bg-accent hover:bg-accent/90 text-white text-xs font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-1.5"
+          >
+            <ExternalLink size={13} /> Live Demo
+          </a>
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="py-2 px-3 bg-dark-card border border-dark-border hover:border-accent text-gray-400 hover:text-white text-xs font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-1.5"
+          >
+            <Github size={13} /> Code
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Fiverr Icon ─── */
+
+function FiverrIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M16.25 16.25v-10h-2.5v10h2.5zm-5 0v-7.5H8.75v-2.5h-2.5v2.5H5v2.5h1.25v5h2.5v-5h2.5v5h2.5v-2.5h-2.5zm5-12.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z" />
+    </svg>
   );
 }
 
